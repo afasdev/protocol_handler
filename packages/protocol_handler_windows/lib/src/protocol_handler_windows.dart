@@ -13,7 +13,7 @@ class ProtocolHandlerWindows extends MethodChannelProtocolHandler {
   }
 
   @override
-  Future<void> register(String scheme) async {
+  Future<void> register(String scheme, {String? friendlyAppName}) async {
     String appPath = Platform.resolvedExecutable;
 
     String protocolRegKey = 'Software\\Classes\\$scheme';
@@ -30,5 +30,14 @@ class ProtocolHandlerWindows extends MethodChannelProtocolHandler {
     final regKey = Registry.currentUser.createKey(protocolRegKey);
     regKey.createValue(protocolRegValue);
     regKey.createKey(protocolCmdRegKey).createValue(protocolCmdRegValue);
+
+    if (friendlyAppName != null) {
+      String applicationRegKey = 'Application';
+      RegistryValue friendlyAppNameRegValue = RegistryValue.string(
+        'ApplicationName',
+        friendlyAppName,
+      );
+      regKey.createKey(applicationRegKey).createValue(friendlyAppNameRegValue);
+    }
   }
 }
